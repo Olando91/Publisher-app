@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Repositories\" />
-    <Folder Include="Data\Services\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MudBlazor" Version="8.3.0" />
   </ItemGroup>
 
