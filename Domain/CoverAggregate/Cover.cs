@@ -1,6 +1,7 @@
 ﻿using Domain.ArtistAggregate;
 using Domain.ArtistAggregate.ValueObjects;
 using Domain.AuthorAggregate.ValueObjects;
+using Domain.Common;
 using Domain.CoverAggregate.ValueObjects;
 using Domain.Primitives;
 
@@ -36,5 +37,13 @@ public class Cover : AggregateRoot<CoverId>
     public static Cover CreateNew(DesignIdea designIdea, DigitalOnly digitalOnly, BookId bookId, List<Artist> artists)
     {
         return new(CoverId.CreateUnique(), designIdea, digitalOnly, bookId, artists);
+    }
+
+    public void Edit(DesignIdea desingIdea, DigitalOnly digitalOnly)
+    {
+        if (DesignIdea != desingIdea)
+            DesignIdea = desingIdea;
+        if (DigitalOnly != digitalOnly)
+            DigitalOnly = digitalOnly;
     }
 }

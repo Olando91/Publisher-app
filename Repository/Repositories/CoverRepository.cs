@@ -39,11 +39,13 @@ public class CoverRepository : ICoverRepository
         }
     }
 
-    public async Task<List<Cover>> GetAllCovers()
+    public async Task<List<Cover>> GetAllCoversAsync()
     {
         try
         {
-            var covers = await _dbContext.Covers.ToListAsync();
+            var covers = await _dbContext.Covers
+                .Include(c => c.Artists)
+                .ToListAsync();
             return covers;
         }
         catch (Exception e)
@@ -56,7 +58,9 @@ public class CoverRepository : ICoverRepository
     {
         try
         {
-            var cover = await _dbContext.Covers.FindAsync(coverId);
+            var cover = await _dbContext.Covers
+                .Include(c => c.Artists)
+                .FirstOrDefaultAsync(c => c.Id == coverId);
             return cover;
         }
         catch (Exception e)

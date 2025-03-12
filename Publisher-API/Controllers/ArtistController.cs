@@ -62,7 +62,7 @@ public class ArtistController : Controller
 
 
     [HttpDelete("delete-artist-by-id")]
-    [ProducesResponseType(typeof(Response<ArtistDTO?>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Response<>), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteArtistById([FromQuery] DeleteArtistByIdRequest request)

@@ -9,5 +9,5 @@ public interface ICoverRepository
     Task SaveChangesAsync();
     Task DeleteCoverByIdAsync(CoverId coverId);
     Task<Cover> GetCoverByIdAsync(CoverId coverId);
-    Task<List<Cover>> GetAllCovers();
+    Task<List<Cover>> GetAllCoversAsync();
 }
