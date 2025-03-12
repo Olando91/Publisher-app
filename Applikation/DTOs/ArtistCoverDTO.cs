@@ -1,10 +1,9 @@
 ﻿namespace Applikation.DTOs;
 
-public record CoverDTO
+public record ArtistCoverDTO
 {
     public Guid Id { get; set; }
     public string DesignIdea { get; set; }
     public bool DigitalOnly { get; set; }
     public Guid BookId { get; set; }
-    public List<CoverArtistDTO> Artists { get; set;}
 }

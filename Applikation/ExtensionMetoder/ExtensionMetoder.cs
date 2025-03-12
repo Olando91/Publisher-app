@@ -39,7 +39,7 @@ public static class ExtensionMetoder
             Id = artist.Id.Value,
             FirstName = artist.FirstName.Value,
             LastName = artist.LastName.Value,
-            Covers = artist.Covers.Select(cover => cover.TilDTO()).ToList()
+            Covers = artist.Covers.Select(cover => cover.TilArtistCoverDTO()).ToList()
         };
     }
 
@@ -51,7 +51,28 @@ public static class ExtensionMetoder
             DesignIdea = cover.DesignIdea.Value,
             DigitalOnly = cover.DigitalOnly.Value,
             BookId = cover.BookId.Value,
-            Artists = cover.Artists.Select(artist => artist.TilDTO()).ToList()
+            Artists = cover.Artists.Select(artist => artist.TilCoverArtistDTO()).ToList()
+        };
+    }
+
+    public static ArtistCoverDTO TilArtistCoverDTO(this Cover cover)
+    {
+        return new ArtistCoverDTO
+        {
+            Id = cover.Id.Value,
+            DesignIdea = cover.DesignIdea.Value,
+            DigitalOnly = cover.DigitalOnly.Value,
+            BookId = cover.BookId.Value
+        };
+    }
+
+    public static CoverArtistDTO TilCoverArtistDTO(this Artist artist)
+    {
+        return new CoverArtistDTO
+        {
+            Id = artist.Id.Value,
+            FirstName = artist.FirstName.Value,
+            LastName = artist.LastName.Value
         };
     }
 }
