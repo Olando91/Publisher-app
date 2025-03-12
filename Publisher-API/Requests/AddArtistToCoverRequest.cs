@@ -1,0 +1,27 @@
+﻿using Applikation.RequestInterfaces;
+
+namespace Publisher_API.Requests;
+
+public class AddArtistToCoverRequest : IAddArtistToCoverRequest
+{
+    public Guid CoverId { get; set; }
+    public Guid ArtistId { get; set; }
+
+    public AddArtistToCoverRequest()
+    {       
+    }
+
+    public AddArtistToCoverRequest(Guid coverId, Guid artistId)
+    {
+        CoverId = coverId;
+        ArtistId = artistId;
+    }
+
+    public bool RequestIsValid()
+    {
+        if (CoverId == Guid.Empty || ArtistId == Guid.Empty)
+            return false;
+
+        return true;
+    }
+}

@@ -20,14 +20,18 @@ public class CoverController : Controller
     private readonly IUseCase<IDeleteCoverByIdRequest, IResponse<string>> _deleteCoverByIdUseCase;
     private readonly IUseCase<IGetAllCoversRequest, IResponse<List<CoverDTO>>> _getAllCoversUseCase;
     private readonly IUseCase<IEditCoverRequest, IResponse<CoverDTO>> _editCoverUseCase;
+    private readonly IUseCase<IAddArtistToCoverRequest, IResponse<CoverDTO>> _addArtistToCoverUseCase;
+    private readonly IUseCase<IRemoveArtistFromCoverRequest, IResponse<CoverDTO>> _removeArtistFromCoverUseCase;
 
-    public CoverController(IUseCase<IAddCoverRequest, IResponse<string>> addCoverUseCase, IUseCase<IGetCoverByIdRequest, IResponse<CoverDTO>> getCoverByIdUseCase, IUseCase<IDeleteCoverByIdRequest, IResponse<string>> deleteCoverByIdUseCase, IUseCase<IGetAllCoversRequest, IResponse<List<CoverDTO>>> getAllCoversUseCase, IUseCase<IEditCoverRequest, IResponse<CoverDTO>> editCoverUseCase)
+    public CoverController(IUseCase<IAddCoverRequest, IResponse<string>> addCoverUseCase, IUseCase<IGetCoverByIdRequest, IResponse<CoverDTO>> getCoverByIdUseCase, IUseCase<IDeleteCoverByIdRequest, IResponse<string>> deleteCoverByIdUseCase, IUseCase<IGetAllCoversRequest, IResponse<List<CoverDTO>>> getAllCoversUseCase, IUseCase<IEditCoverRequest, IResponse<CoverDTO>> editCoverUseCase, IUseCase<IAddArtistToCoverRequest, IResponse<CoverDTO>> addArtistToCoverUseCase, IUseCase<IRemoveArtistFromCoverRequest, IResponse<CoverDTO>> removeArtistFromCoverUseCase)
     {
         _addCoverUseCase = addCoverUseCase;
         _getCoverByIdUseCase = getCoverByIdUseCase;
         _deleteCoverByIdUseCase = deleteCoverByIdUseCase;
         _getAllCoversUseCase = getAllCoversUseCase;
         _editCoverUseCase = editCoverUseCase;
+        _addArtistToCoverUseCase = addArtistToCoverUseCase;
+        _removeArtistFromCoverUseCase = removeArtistFromCoverUseCase;
     }
 
     [HttpPost("add-cover")]
@@ -93,6 +97,34 @@ public class CoverController : Controller
             return new ObjectResult(new object()) { StatusCode = StatusCodes.Status400BadRequest };
 
         var apiResponse = await _editCoverUseCase.ExecuteAsync(request);
+
+        return new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status200OK };
+    }
+
+    [HttpPut("add-artist-to-cover")]
+    [ProducesResponseType(typeof(Response<CoverDTO?>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Response<>), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddArtistToCover([FromBody] AddArtistToCoverRequest request)
+    {
+        if (!request.RequestIsValid())
+            return new ObjectResult(new object()) { StatusCode = StatusCodes.Status400BadRequest };
+
+        var apiResponse = await _addArtistToCoverUseCase.ExecuteAsync(request);
+
+        return new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status200OK };
+    }
+
+    [HttpPut("remove-artist-from-cover")]
+    [ProducesResponseType(typeof(Response<CoverDTO?>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Response<>), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveArtistFromCover([FromBody] RemoveArtistFromCoverRequest request)
+    {
+        if (!request.RequestIsValid())
+            return new ObjectResult(new object()) { StatusCode = StatusCodes.Status400BadRequest };
+
+        var apiResponse = await _removeArtistFromCoverUseCase.ExecuteAsync(request);
 
         return new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status200OK };
     }

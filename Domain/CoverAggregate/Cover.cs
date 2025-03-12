@@ -46,4 +46,18 @@ public class Cover : AggregateRoot<CoverId>
         if (DigitalOnly != digitalOnly)
             DigitalOnly = digitalOnly;
     }
+
+    public void AddArtist(Artist artist)
+    {
+        _artists.Add(artist);
+    }
+
+    public void RemoveArtist(Artist artist)
+    {
+        if (_artists.Count == 1)
+            throw new Exception("Cover skal altid have mindst 1 artist");
+
+        if (_artists.Contains(artist))
+            _artists.Remove(artist);
+    }
 }

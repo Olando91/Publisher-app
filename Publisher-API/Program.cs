@@ -56,6 +56,8 @@ builder.Services.AddScoped<IUseCase<IGetCoverByIdRequest, IResponse<CoverDTO>>, 
 builder.Services.AddScoped<IUseCase<IDeleteCoverByIdRequest, IResponse<string>>, DeleteCoverByIdUseCase>();
 builder.Services.AddScoped<IUseCase<IGetAllCoversRequest, IResponse<List<CoverDTO>>>, GetAllCoversUseCase>();
 builder.Services.AddScoped<IUseCase<IEditCoverRequest, IResponse<CoverDTO>>, EditCoverUseCase>();
+builder.Services.AddScoped<IUseCase<IAddArtistToCoverRequest, IResponse<CoverDTO>>, AddArtistToCoverUseCase>();
+builder.Services.AddScoped<IUseCase<IRemoveArtistFromCoverRequest, IResponse<CoverDTO>>, RemoveArtistFromCoverUseCase>();
 
 // Repositories
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
