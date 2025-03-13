@@ -1,0 +1,12 @@
+﻿@using MudBlazor
+
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
+    <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Books</MudNavLink>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Authors</MudNavLink>
+    <MudNavGroup Title="Settings" Expanded="true">
+        <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
+        <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>
