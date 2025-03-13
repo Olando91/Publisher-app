@@ -1,12 +1,30 @@
 ﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@inject IDialogService DialogService;
 
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
-    <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
-    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Books</MudNavLink>
-    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">Authors</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
-        <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
-    </MudNavGroup>
+    <MudPaper Square="true" Style="height:90vh;">
+        <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
+        <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
+        <MudNavGroup Title="Settings" Expanded="true">
+            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+            <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
+        </MudNavGroup>
+    </MudPaper>
+
+    <MudPaper Square="true" Style="height:10vh; justify-content:center; display:flex; align-items: center;">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick=LoginDialog Style="width:90%; height:50%;">
+            Admin login
+        </MudButton>
+    </MudPaper>
 </MudNavMenu>
+
+@code {
+
+    private Task LoginDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        return DialogService.ShowAsync<AdminLoginDialog>("Admin dialog", options);
+    }
+}

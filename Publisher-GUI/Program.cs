@@ -1,4 +1,6 @@
 using MudBlazor.Services;
+using Publisher_GUI.Data.Repositories;
+using Publisher_GUI.Data.Services;
 
 namespace Publisher_GUI;
 
@@ -13,6 +15,14 @@ public class Program
             .AddInteractiveServerComponents();
 
         builder.Services.AddMudServices();
+        builder.Services.AddHttpClient();
+        builder.Services.AddHttpContextAccessor();
+
+        //Services
+        builder.Services.AddScoped<AuthorService>();
+
+        //Repos
+        builder.Services.AddScoped<AuthorRepository>();
 
         var app = builder.Build();
 

@@ -26,4 +26,18 @@ public class AuthorService
             throw e;
         }
     }
+
+    public async Task<List<Author>> GetAllAuthors()
+    {
+        try
+        {
+            var authors = await _authorRepo.GetAllAuthors();
+
+            return authors.Data;
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
 }
