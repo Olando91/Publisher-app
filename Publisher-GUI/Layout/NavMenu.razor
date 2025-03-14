@@ -3,7 +3,7 @@
 @inject IDialogService DialogService;
 
 <MudNavMenu>
-    <MudPaper Square="true" Style="height:90vh;">
+    <MudPaper Square="true" Style="height:85vh;">
         <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
         <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
         <MudNavGroup Title="Settings" Expanded="true">
@@ -12,7 +12,7 @@
         </MudNavGroup>
     </MudPaper>
 
-    <MudPaper Square="true" Style="height:10vh; justify-content:center; display:flex; align-items: center;">
+    <MudPaper Square="true" Style="justify-content:center; display:flex; align-items: center;">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick=LoginDialog Style="width:90%; height:50%;">
             Admin login
         </MudButton>

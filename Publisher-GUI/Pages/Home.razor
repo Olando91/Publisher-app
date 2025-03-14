@@ -4,21 +4,101 @@
 @using Publisher_GUI.Models.Author
 @inject AuthorService _authorService 
 
-<PageTitle>Forside</PageTitle>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<MudContainer class="mt-16">
+    <MudSwitch @bind-Value=@AuthorBookSwitch Label="Sort by Author/Book" LabelPlacement="Placement.Top" Color="Color.Primary" UncheckedColor="Color.Primary" />
+    @if (Authors.Count == 0)
+    {
+        <MudText>Loading...</MudText>
+    }
+    else
+    {
+        <MudGrid Class="mt-8">
+            @foreach (var author in Authors)
+            {
+                foreach (var book in author.Books)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Elevation="25" Class="rounded-lg pb-4">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h5" Align="Align.Center">@book.Title</MudText>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent Style="display:flex; flex-direction: column; align-items: center;">
+                                <img src="@GetRandomImage()" alt="Cover" style="width: 60%; height:auto;"/>
+                                <MudText Typo="Typo.h6" Align="Align.Center">@author.FullName()</MudText>
+                                <MudText Typo="Typo.h6" Align="Align.Center">Price: @book.BasePrice kr.</MudText>
+                            </MudCardContent>
+                            <MudCardActions Class="d-flex justify-center">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 50%">Details</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            }
+        </MudGrid>
+    }
+</MudContainer>
 
 @code{
-    private List<Author> Authors { get; set; }
+    public bool AuthorBookSwitch
+    {
+        get => _authorBookSwitch;
+        set
+        {
+            _authorBookSwitch = value;
+            SortAuthorsOrBooks();
+        }
+    }
+    private bool _authorBookSwitch;
+    private List<Author> Authors { get; set; } = new();
+    private static readonly string[] Images =
+        {
+            "Images/Cover1.jpg",
+            "Images/Cover2.jpg",
+            "Images/Cover3.jpg",
+            "Images/Cover4.jpg",
+            "Images/Cover5.jpg",
+            "Images/Cover6.jpg",
+    };
+    private Random random = new();
 
     protected override async Task OnInitializedAsync()
     {
         Authors = await _authorService.GetAllAuthors();
+        SortAuthorsOrBooks();
     }
     private async void GetAuthor(Guid authorId)
     {
         var author = await _authorService.GetAuthorById(authorId);
+    }
+
+    private string GetRandomImage()
+    {
+        return Images[random.Next(Images.Length)];
+    }
+
+    private void SortAuthorsOrBooks()
+    {
+        if (AuthorBookSwitch)
+        {
+            // Sort by book title
+            Authors = Authors
+                .Select(a => new Author
+                    {
+                        FirstName = a.FirstName,
+                        LastName = a.LastName,
+                        Books = a.Books.OrderBy(b => b.Title).ToList()
+                    })
+                .OrderBy(a => a.Books.FirstOrDefault()?.Title ?? string.Empty)
+                .ToList();
+        }
+        else
+        {
+            // Sort by author first name
+            Authors = Authors.OrderBy(a => a.FirstName).ToList();
+        }
+
+        StateHasChanged(); // Re-render the component
     }
 }

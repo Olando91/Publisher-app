@@ -17,4 +17,8 @@ public class Author
     public Author()
     {
     }
+    public string FullName()
+    {
+        return $"{FirstName} {LastName}";
+    }
 }
