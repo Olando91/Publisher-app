@@ -1,11 +1,12 @@
 ﻿using Applikation.ApiResponse;
-using Applikation.DTOs;
+using Applikation.DTOs.Book;
 using Applikation.ExtensionMetoder;
 using Applikation.Porte.Indgående;
 using Applikation.Porte.Udgående;
 using Applikation.RequestInterfaces;
-using Domain.AuthorAggregate.Entities;
 using Domain.AuthorAggregate.ValueObjects;
+using Domain.BookAggregate;
+using Domain.BookAggregate.ValueObjects;
 using Domain.CoverAggregate.ValueObjects;
 using System.Net;
 
@@ -13,11 +14,11 @@ namespace Applikation.UseCases.Update;
 
 public class EditBookUseCase : IUseCase<IEditBookRequest, IResponse<BookDTO>>
 {
-    private readonly IAuthorRepository _authorRepo;
+    private readonly IBookRepository _bookRepo;
 
-    public EditBookUseCase(IAuthorRepository authorRepo)
+    public EditBookUseCase(IBookRepository bookRepo)
     {
-        _authorRepo = authorRepo;
+        _bookRepo = bookRepo;
     }
 
     public IResponse<BookDTO> Execute(IEditBookRequest request)
@@ -29,23 +30,15 @@ public class EditBookUseCase : IUseCase<IEditBookRequest, IResponse<BookDTO>>
     {
         try
         {
-            var author = await _authorRepo.GetAuthorByIdAsync(AuthorId.Create(request.AuthorId));
+            var bookToEdit = await _bookRepo.GetBookByIdAsync(BookId.Create(request.BookId));
 
-            var bookToEdit = author.Books.FirstOrDefault(x => x.Id.Value == request.BookId);
-
-            var bookWithEdits = Book.Create(
-                BookId.Create(request.BookId),
-                Title.Create(request.Title),
+            bookToEdit.Edit(Title.Create(request.Title),
                 PublishDate.Create(request.PublishDate),
-                BasePrice.Create(request.BasePrice),
-                AuthorId.Create(request.AuthorId), 
-                CoverId.Create(request.CoverId));
-
-            bookToEdit.Edit(bookWithEdits);
+                BasePrice.Create(request.BasePrice));
 
             var editedBookDTO = bookToEdit.TilDTO();
 
-            await _authorRepo.SaveChangesAsync();
+            await _bookRepo.SaveChangesAsync();
 
             return new ResponseBuilder().CreateSuccessResponse(editedBookDTO, HttpStatusCode.OK);
         }

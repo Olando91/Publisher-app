@@ -3,17 +3,18 @@ using Applikation.Porte.Indgående;
 using Applikation.Porte.Udgående;
 using Applikation.RequestInterfaces;
 using Domain.AuthorAggregate.ValueObjects;
+using Domain.BookAggregate.ValueObjects;
 using System.Net;
 
 namespace Applikation.UseCases.Delete;
 
 public class DeleteBookUseCase : IUseCase<IDeleteBookRequest, IResponse<string>>
 {
-    private readonly IAuthorRepository _authorRepo;
+    private readonly IBookRepository _bookRepo;
 
-    public DeleteBookUseCase(IAuthorRepository authorRepo)
+    public DeleteBookUseCase(IBookRepository bookRepo)
     {
-        _authorRepo = authorRepo;
+        _bookRepo = bookRepo;
     }
 
     public IResponse<string> Execute(IDeleteBookRequest request)
@@ -25,11 +26,8 @@ public class DeleteBookUseCase : IUseCase<IDeleteBookRequest, IResponse<string>>
     {
         try
         {
-            var author = await _authorRepo.GetAuthorByIdAsync(AuthorId.Create(request.AuthorId));
-
-            author.DeleteBook(BookId.Create(request.BookId));
-
-            await _authorRepo.SaveChangesAsync();
+            await _bookRepo.DeleteBookByIdAsync(BookId.Create(request.BookId));
+            await _bookRepo.SaveChangesAsync();
 
             return new ResponseBuilder().CreateSuccessResponse("Success", HttpStatusCode.OK);
         }

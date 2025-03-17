@@ -12,7 +12,7 @@ using Repository;
 namespace Repository.Migrations
 {
     [DbContext(typeof(PublisherDBContext))]
-    [Migration("20250310084549_Innit")]
+    [Migration("20250317102605_Innit")]
     partial class Innit
     {
         /// <inheritdoc />
@@ -84,14 +84,41 @@ namespace Repository.Migrations
                     b.ToTable("Authors", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.BookAggregate.Book", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BasePrice")
+                        .HasColumnType("int")
+                        .HasColumnName("BasePrice");
+
+                    b.Property<DateOnly>("PublishDate")
+                        .HasColumnType("date")
+                        .HasColumnName("PublishDate");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Books", (string)null);
+                });
+
             modelBuilder.Entity("Domain.CoverAggregate.Cover", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BookId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DesignIdea")
                         .IsRequired()
@@ -103,6 +130,9 @@ namespace Repository.Migrations
                         .HasColumnName("DigitalOnly");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookId")
+                        .IsUnique();
 
                     b.ToTable("Covers", (string)null);
                 });
@@ -122,44 +152,36 @@ namespace Repository.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.BookAggregate.Book", b =>
+                {
+                    b.HasOne("Domain.AuthorAggregate.Author", "Author")
+                        .WithMany("Books")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Domain.CoverAggregate.Cover", b =>
+                {
+                    b.HasOne("Domain.BookAggregate.Book", "Book")
+                        .WithOne("Cover")
+                        .HasForeignKey("Domain.CoverAggregate.Cover", "BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("Domain.AuthorAggregate.Author", b =>
                 {
-                    b.OwnsMany("Domain.AuthorAggregate.Entities.Book", "Books", b1 =>
-                        {
-                            b1.Property<Guid>("AuthorId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("AuthorId");
-
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("Id");
-
-                            b1.Property<int>("BasePrice")
-                                .HasColumnType("int")
-                                .HasColumnName("BasePrice");
-
-                            b1.Property<Guid>("CoverId")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("CoverId");
-
-                            b1.Property<DateOnly>("PublishDate")
-                                .HasColumnType("date")
-                                .HasColumnName("PublishDate");
-
-                            b1.Property<string>("Title")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Title");
-
-                            b1.HasKey("AuthorId", "Id");
-
-                            b1.ToTable("Books", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("AuthorId");
-                        });
-
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Domain.BookAggregate.Book", b =>
+                {
+                    b.Navigation("Cover");
                 });
 #pragma warning restore 612, 618
         }

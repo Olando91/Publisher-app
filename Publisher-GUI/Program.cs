@@ -20,9 +20,11 @@ public class Program
 
         //Services
         builder.Services.AddScoped<AuthorService>();
+        builder.Services.AddScoped<BookService>();
 
         //Repos
         builder.Services.AddScoped<AuthorRepository>();
+        builder.Services.AddScoped<BookRepository>();
 
         var app = builder.Build();
 

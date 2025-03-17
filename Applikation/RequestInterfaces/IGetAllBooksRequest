@@ -1,0 +1,5 @@
+﻿namespace Applikation.RequestInterfaces;
+
+public interface IGetAllBooksRequest
+{
+}

@@ -45,6 +45,8 @@ public class CoverRepository : ICoverRepository
         {
             var covers = await _dbContext.Covers
                 .Include(c => c.Artists)
+                .Include(c => c.Book)
+                .ThenInclude(b => b.Author)
                 .ToListAsync();
             return covers;
         }
@@ -60,6 +62,8 @@ public class CoverRepository : ICoverRepository
         {
             var cover = await _dbContext.Covers
                 .Include(c => c.Artists)
+                .Include(c => c.Book)
+                .ThenInclude(b => b.Author)
                 .FirstOrDefaultAsync(c => c.Id == coverId);
             return cover;
         }

@@ -45,6 +45,8 @@ namespace Repository.Repositories
             {
                 var artists = await _dbContext.Artists
                     .Include(a => a.Covers)
+                    .ThenInclude(c => c.Book)
+                    .ThenInclude(b => b.Author)
                     .ToListAsync();
                 return artists;
             }
@@ -60,6 +62,8 @@ namespace Repository.Repositories
             {
                 var artist = await _dbContext.Artists
                     .Include(a => a.Covers)
+                    .ThenInclude(c => c.Book)
+                    .ThenInclude(b => b.Author)
                     .FirstOrDefaultAsync(a => a.Id == id);
                 return artist;
             }

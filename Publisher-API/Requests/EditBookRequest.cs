@@ -5,29 +5,25 @@ namespace Publisher_API.Requests;
 public class EditBookRequest : IEditBookRequest
 {
     public Guid BookId { get; set; }
-    public Guid AuthorId { get; set; }
     public string Title { get; set; }
     public DateOnly PublishDate { get; set; }
     public int BasePrice { get; set; }
-    public Guid CoverId { get; set; }
 
     public EditBookRequest()
     {
     }
 
-    public EditBookRequest(Guid bookid, Guid authorId, string title, DateOnly publishDate, int basePrice, Guid coverId)
+    public EditBookRequest(Guid bookId, string title, DateOnly publishDate, int basePrice)
     {
-        BookId = bookid;
-        AuthorId = authorId;
+        BookId = bookId;
         Title = title;
         PublishDate = publishDate;
         BasePrice = basePrice;
-        CoverId = coverId;
     }
 
     public bool RequestIsValid()
     {
-        if (BookId == Guid.Empty || AuthorId == Guid.Empty || string.IsNullOrEmpty(Title) || CoverId == Guid.Empty)
+        if (BookId == Guid.Empty || string.IsNullOrEmpty(Title))
             return false;
 
         return true;

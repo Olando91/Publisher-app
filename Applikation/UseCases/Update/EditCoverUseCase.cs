@@ -1,5 +1,5 @@
 ﻿using Applikation.ApiResponse;
-using Applikation.DTOs;
+using Applikation.DTOs.Cover;
 using Applikation.ExtensionMetoder;
 using Applikation.Porte.Indgående;
 using Applikation.Porte.Udgående;

@@ -1,6 +1,6 @@
-﻿namespace Applikation.DTOs;
+﻿namespace Publisher_GUI.Models.Artist;
 
-public record CoverArtistDTO
+public class CoverArtist
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }

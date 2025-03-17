@@ -1,5 +1,5 @@
 ﻿using Applikation.ApiResponse;
-using Applikation.DTOs;
+using Applikation.DTOs.Artist;
 using Applikation.Porte.Indgående;
 using Applikation.RequestInterfaces;
 using Applikation.UseCases.Create;

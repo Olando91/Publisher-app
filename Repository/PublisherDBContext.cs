@@ -1,6 +1,6 @@
 ﻿using Domain.ArtistAggregate;
 using Domain.AuthorAggregate;
-using Domain.AuthorAggregate.Entities;
+using Domain.BookAggregate;
 using Domain.CoverAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +16,7 @@ public class PublisherDBContext : DbContext
     public DbSet<Author> Authors { get; set; }
     public DbSet<Cover> Covers { get; set; }
     public DbSet<Artist> Artists { get; set; }
+    public DbSet<Book> Books { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PublisherDBContext).Assembly);

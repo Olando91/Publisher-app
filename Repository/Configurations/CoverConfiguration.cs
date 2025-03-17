@@ -1,5 +1,5 @@
 ﻿using Domain.ArtistAggregate;
-using Domain.AuthorAggregate.ValueObjects;
+using Domain.BookAggregate.ValueObjects;
 using Domain.CoverAggregate;
 using Domain.CoverAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -38,11 +38,11 @@ public class CoverConfiguration : IEntityTypeConfiguration<Cover>
             dOnly => dOnly.Value,
             value => DigitalOnly.Create(value));
 
-        builder.Property(c => c.BookId)
-            .HasColumnName("BookId")
-            .HasConversion(
-            bid => bid.Value,
-            value => BookId.Create(value));
+        builder.HasOne(c => c.Book)
+            .WithOne(b => b.Cover)
+            .HasForeignKey<Cover>(c => c.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 
     public void ConfigureArtistCoverTable(EntityTypeBuilder<Cover> builder)

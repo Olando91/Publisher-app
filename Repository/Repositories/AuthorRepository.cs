@@ -43,7 +43,11 @@ public class AuthorRepository : IAuthorRepository
     {
         try
         {
-            var authors = await _dbContext.Authors.ToListAsync();
+            var authors = await _dbContext.Authors
+                .Include(a => a.Books)
+                .ThenInclude(b => b.Cover)
+                .ThenInclude(c => c.Artists)
+                .ToListAsync();
             return authors;
         }
         catch (Exception e)
@@ -56,7 +60,11 @@ public class AuthorRepository : IAuthorRepository
     {
         try
         {
-            var author = await _dbContext.Authors.FindAsync(id);
+            var author = await _dbContext.Authors
+                .Include(a => a.Books)
+                .ThenInclude(b => b.Cover)
+                .ThenInclude(c => c.Artists)
+                .FirstOrDefaultAsync(a => a.Id == id);
             return author;
         }
         catch (Exception e)

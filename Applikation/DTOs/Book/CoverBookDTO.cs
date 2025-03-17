@@ -1,11 +1,12 @@
-﻿namespace Applikation.DTOs;
+﻿using Applikation.DTOs.Author;
 
-public record BookDTO
+namespace Applikation.DTOs.Book;
+
+public record CoverBookDTO
 {
     public Guid Id { get; set; }
     public string Title { get; set; }
     public DateOnly PublishDate { get; set; }
     public int BasePrice { get; set; }
-    public Guid AuthorId { get; set; }
-    public Guid CoverId { get; set; }
+    public BookAuthorDTO Author { get; set; }
 }

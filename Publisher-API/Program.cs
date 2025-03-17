@@ -1,5 +1,8 @@
 using Applikation.ApiResponse;
-using Applikation.DTOs;
+using Applikation.DTOs.Artist;
+using Applikation.DTOs.Author;
+using Applikation.DTOs.Book;
+using Applikation.DTOs.Cover;
 using Applikation.Porte.Indgående;
 using Applikation.Porte.Udgående;
 using Applikation.RequestInterfaces;
@@ -44,6 +47,8 @@ builder.Services.AddScoped<IUseCase<IEditAuthorRequest, IResponse<AuthorDTO>>, E
 builder.Services.AddScoped<IUseCase<IAddBookRequest, IResponse<string>>, AddBookUseCase>();
 builder.Services.AddScoped<IUseCase<IEditBookRequest, IResponse<BookDTO>>, EditBookUseCase>();
 builder.Services.AddScoped<IUseCase<IDeleteBookRequest, IResponse<string>>, DeleteBookUseCase>();
+builder.Services.AddScoped<IUseCase<IGetBookByIdRequest, IResponse<BookDTO>>, GetBookByIdUseCase>();
+builder.Services.AddScoped<IUseCase<IGetAllBooksRequest, IResponse<List<BookDTO>>>, GetAllBooksUseCase>();
 
 builder.Services.AddScoped<IUseCase<IAddArtistRequest, IResponse<string>>, AddArtistUseCase>();
 builder.Services.AddScoped<IUseCase<IGetArtistByIdRequest, IResponse<ArtistDTO>>, GetArtistByIdUseCase>();
@@ -63,6 +68,7 @@ builder.Services.AddScoped<IUseCase<IRemoveArtistFromCoverRequest, IResponse<Cov
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<ICoverRepository, CoverRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddCors(options =>
 {

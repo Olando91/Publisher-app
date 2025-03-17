@@ -1,4 +1,6 @@
-﻿namespace Publisher_GUI.Models.Author;
+﻿using Models.Book;
+
+namespace Publisher_GUI.Models.Author;
 
 public class Author
 {

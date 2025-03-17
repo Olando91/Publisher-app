@@ -1,6 +1,6 @@
 ﻿using Domain.Primitives;
 
-namespace Domain.AuthorAggregate.ValueObjects;
+namespace Domain.BookAggregate.ValueObjects;
 
 public sealed class BookId : ValueObject
 {

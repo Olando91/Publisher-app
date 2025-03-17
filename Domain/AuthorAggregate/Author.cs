@@ -1,5 +1,6 @@
-﻿using Domain.AuthorAggregate.Entities;
-using Domain.AuthorAggregate.ValueObjects;
+﻿using Domain.AuthorAggregate.ValueObjects;
+using Domain.BookAggregate;
+using Domain.BookAggregate.ValueObjects;
 using Domain.Common;
 using Domain.Primitives;
 
@@ -39,17 +40,5 @@ public sealed class Author : AggregateRoot<AuthorId>
             FirstName = firstName;
         if (LastName != lastName)
             LastName = lastName;
-    }
-
-    public void AddBook(Book book)
-    {
-        _books.Add(book);
-    }
-
-    public void DeleteBook(BookId bookId)
-    {
-        var bookToRemove = _books.FirstOrDefault(x => x.Id == bookId);
-
-        _books.Remove(bookToRemove);
     }
 }

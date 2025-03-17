@@ -1,21 +1,20 @@
 ﻿using Domain.Primitives;
 
-namespace Domain.AuthorAggregate.ValueObjects;
+namespace Domain.BookAggregate.ValueObjects;
 
-public sealed class BasePrice : ValueObject
+public sealed class Title : ValueObject
 {
-    public int Value { get; private set; }
+    public string Value { get; private set; }
 
-    private BasePrice(int value)
+    private Title(string value)
     {
         Value = value;
     }
 
-    public static BasePrice Create(int value)
+    public static Title Create(string value)
     {
         return new(value);
     }
-
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;
