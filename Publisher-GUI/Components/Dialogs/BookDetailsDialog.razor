@@ -1,0 +1,60 @@
+﻿@using MudBlazor
+@using global::Models.Book
+
+<MudDialog>
+    <TitleContent>
+        <MudText Align="Align.Center" Typo="Typo.h4" Class="text-center w-100">@Book.Title</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudGrid Style="display:flex; flex-direction:row;">
+            <MudItem xs="4" Class="text-right">
+                <img src="Images/Cover1.jpg" alt="Cover" style="width: 160px; height:auto;" />
+            </MudItem>
+
+            <MudItem xs="1" Class="d-flex align-center">
+                <MudDivider Vertical="true" />
+            </MudItem>
+
+            <MudItem xs="7" Style="display:flex; flex-direction:column;">
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="margin-bottom: 2vh;">Details</MudText>
+                <MudText Typo="Typo.body1">
+                    <strong>Author:</strong> @Book.Author.FullName()
+                </MudText>
+                <MudText Typo="Typo.body1">
+                    <strong>Published:</strong> @Book.PublishDate
+                </MudText>
+                <MudText Typo="Typo.body1">
+                    <strong>Cover design idea:</strong> @Book.Cover.DesignIdea
+                </MudText>
+                @foreach (var artist in Book.Cover.Artists)
+                {
+                    <MudText Typo="Typo.body1">
+                        <strong>Cover artist:</strong> @artist.FullName()
+                    </MudText>
+                }
+                <MudText Typo="Typo.body1">
+                    <strong>Price:</strong> @Book.BasePrice kr.
+                </MudText>
+                @if (Book.Cover.DigitalOnly)
+                {
+                    <MudChip T="string" Label="true" Color="Color.Primary" Style="width:50%; margin-top: 10vh; margin-left:4vw;">DIGITAL ONLY</MudChip>
+                }
+
+            </MudItem>
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Book Book { get; set; } = null!;
+
+    private void Close() => MudDialog.Close();
+}
