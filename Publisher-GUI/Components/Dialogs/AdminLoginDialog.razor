@@ -2,22 +2,40 @@
 
 <MudDialog>
     <TitleContent>
-        Dialog Title
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Admin Login</MudText>
     </TitleContent>
+
     <DialogContent>
-        Dialog Content
+        <MudTextField Label="Username" @bind-Value="Username" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+        <MudTextField Label="Password" @bind-Value="Password" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" InputType="InputType.Password" />
+        <MudText Color="Color.Error">@ErrorMessage</MudText>
     </DialogContent>
+
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Login">Login</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Close">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private string Username { get; set; } = "";
+    private string Password { get; set; } = "";
+    private string ErrorMessage { get; set; } = "";
 
-    private void Cancel() => MudDialog.Cancel();
+    private void Login()
+    {
+        // Replace with actual authentication logic
+        if (Username == "admin" && Password == "password123")
+        {
+            MudDialog.Close(DialogResult.Ok(true)); // Successfully logged in
+        }
+        else
+        {
+            ErrorMessage = "Invalid username or password.";
+        }
+    }
+
+    private void Close() => MudDialog.Close(DialogResult.Cancel());
 }
