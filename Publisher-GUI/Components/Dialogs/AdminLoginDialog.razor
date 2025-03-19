@@ -29,8 +29,6 @@
     [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
     private LoginModel loginModel = new LoginModel();
-    // private string Username { get; set; } = "";
-    // private string Password { get; set; } = "";
     private string ErrorMessage { get; set; } = "";
 
     private async Task Login()
@@ -40,7 +38,7 @@
         if (res != null && res.Token != null)
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Token);
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/admin");
         }
 
         // Replace with actual authentication logic
