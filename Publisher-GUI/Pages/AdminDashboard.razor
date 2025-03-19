@@ -1,6 +1,15 @@
 ﻿@page "/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+<AuthorizeView>
+    <NotAuthorized>
+        FORSVIND ELLER DØ!!!
+    </NotAuthorized>
+    <Authorized>
+        <h3>HELLO ADMIN!!</h3>
+    </Authorized>
+</AuthorizeView>
 
-<h3>HELLO ADMIN!!</h3>
 
 @code {
 
