@@ -1,21 +1,32 @@
-﻿@using MudBlazor
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
 @using Publisher_GUI.Components.Dialogs
-@inject IDialogService DialogService;
+@using Publisher_GUI.Data.Services.Authentication
+@inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 
 <MudNavMenu>
     <MudPaper Square="true" Style="height:85vh;">
         <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
-        <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
-        <MudNavGroup Title="Settings" Expanded="true">
-            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
-            <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
-        </MudNavGroup>
+        <AuthorizeView>
+            <Authorized>
+                <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Admin dashboard</MudNavLink>
+            </Authorized>
+        </AuthorizeView>
     </MudPaper>
 
     <MudPaper Square="true" Style="justify-content:center; display:flex; align-items: center;">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick=LoginDialog Style="width:90%; height:50%;">
-            Admin login
-        </MudButton>
+        <AuthorizeView>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick=LoginDialog Style="width:90%; height:50%;">
+                    Admin login
+                </MudButton>
+            </NotAuthorized>
+            <Authorized>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick=Logout Style="width:90%; height: 50%">Logout</MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudPaper>
 </MudNavMenu>
 
@@ -26,5 +37,11 @@
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
         return DialogService.ShowAsync<AdminLoginDialog>("Admin dialog", options);
+    }
+
+    private async Task Logout()
+    {
+        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsLoggedOut();
+        NavigationManager.NavigateTo("/");
     }
 }

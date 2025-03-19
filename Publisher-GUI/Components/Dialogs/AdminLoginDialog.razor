@@ -1,4 +1,12 @@
-﻿@using MudBlazor
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Data.Services.Authentication
+@using Publisher_GUI.Models.Authorization
+@using global::Data.Services.Authentication
+@inject AuthorizationService AuthorizationService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
 
 <MudDialog>
     <TitleContent>
@@ -6,8 +14,8 @@
     </TitleContent>
 
     <DialogContent>
-        <MudTextField Label="Username" @bind-Value="Username" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
-        <MudTextField Label="Password" @bind-Value="Password" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" InputType="InputType.Password" />
+        <MudTextField Label="Username" @bind-Value="loginModel.Username" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+        <MudTextField Label="Password" @bind-Value="loginModel.Password" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" InputType="InputType.Password" />
         <MudText Color="Color.Error">@ErrorMessage</MudText>
     </DialogContent>
 
@@ -20,21 +28,30 @@
 @code {
     [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
-    private string Username { get; set; } = "";
-    private string Password { get; set; } = "";
+    private LoginModel loginModel = new LoginModel();
+    // private string Username { get; set; } = "";
+    // private string Password { get; set; } = "";
     private string ErrorMessage { get; set; } = "";
 
-    private void Login()
+    private async Task Login()
     {
+        var res = await AuthorizationService.HandleLogin(loginModel);
+
+        if (res != null && res.Token != null)
+        {
+            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Token);
+            NavigationManager.NavigateTo("/");
+        }
+
         // Replace with actual authentication logic
-        if (Username == "admin" && Password == "password123")
-        {
-            MudDialog.Close(DialogResult.Ok(true)); // Successfully logged in
-        }
-        else
-        {
-            ErrorMessage = "Invalid username or password.";
-        }
+        // if (Username == "admin" && Password == "password123")
+        // {
+        //     MudDialog.Close(DialogResult.Ok(true)); // Successfully logged in
+        // }
+        // else
+        // {
+        //     ErrorMessage = "Invalid username or password.";
+        // }
     }
 
     private void Close() => MudDialog.Close(DialogResult.Cancel());
