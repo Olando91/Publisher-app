@@ -2,11 +2,13 @@
 using Applikation.DTOs.Author;
 using Applikation.Porte.Indgående;
 using Applikation.RequestInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Publisher_API.Requests;
 
 namespace Publisher_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/author")]
 public class AuthorController : Controller
