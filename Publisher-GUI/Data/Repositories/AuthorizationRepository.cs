@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Publisher_GUI.Models;
 using Publisher_GUI.Models.Authorization;
@@ -8,7 +9,7 @@ namespace Publisher_GUI.Data.Repositories;
 
 public class AuthorizationRepository : BaseRepository
 {
-    public AuthorizationRepository(HttpClient httpClient, IConfiguration configuration, ProtectedSessionStorage sessionStorage) : base(httpClient, configuration, sessionStorage)
+    public AuthorizationRepository(HttpClient httpClient, IConfiguration configuration, ProtectedSessionStorage sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(httpClient, configuration, sessionStorage, authenticationStateProvider)
     {
     }
 

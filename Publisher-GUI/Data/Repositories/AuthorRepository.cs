@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Publisher_GUI.Models;
 using Publisher_GUI.Models.Author;
 using System.Net;
@@ -7,7 +8,7 @@ namespace Publisher_GUI.Data.Repositories;
 
 public class AuthorRepository : BaseRepository
 {
-    public AuthorRepository(HttpClient httpClient, IConfiguration configuration, ProtectedSessionStorage sessionStorage) : base(httpClient, configuration, sessionStorage)
+    public AuthorRepository(HttpClient httpClient, IConfiguration configuration, ProtectedSessionStorage sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(httpClient, configuration, sessionStorage, authenticationStateProvider)
     {
     }
 
