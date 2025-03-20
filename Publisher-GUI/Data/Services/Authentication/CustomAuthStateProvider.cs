@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Publisher_GUI.Models.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -9,16 +10,16 @@ public class CustomAuthStateProvider(ProtectedSessionStorage sessionStorage) : A
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = (await sessionStorage.GetAsync<string>("authToken")).Value;
-        var identity = string.IsNullOrEmpty(token) ? new ClaimsIdentity() : GetClaimsIdentity(token);
+        var sessionModel = (await sessionStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
+        var identity = sessionModel == null ? new ClaimsIdentity() : GetClaimsIdentity(sessionModel.Token);
         var user = new ClaimsPrincipal(identity);
         return new AuthenticationState(user);
     }
 
-    public async Task MarkUserAsAuthenticated(string token)
+    public async Task MarkUserAsAuthenticated(LoginResponseModel model)
     {
-        await sessionStorage.SetAsync("authToken", token);
-        var identity = GetClaimsIdentity(token);
+        await sessionStorage.SetAsync("sessionState", model);
+        var identity = GetClaimsIdentity(model.Token);
         var user = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
@@ -33,7 +34,7 @@ public class CustomAuthStateProvider(ProtectedSessionStorage sessionStorage) : A
 
     public async Task MarkUserAsLoggedOut()
     {
-        await sessionStorage.DeleteAsync("authToken");
+        await sessionStorage.DeleteAsync("sessionState");
         var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
