@@ -1,6 +1,8 @@
 ﻿using Applikation.ApiResponse;
 using Applikation.Porte.Indgående;
+using Applikation.Porte.Udgående;
 using Applikation.RequestInterfaces;
+using Domain.UserAggregate;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,21 +12,30 @@ using Publisher_API.Requests;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Publisher_API.Controllers;
 
 [Route("api/authentication")]
 [ApiController]
-public class AuthController(IConfiguration configuration) : ControllerBase
+public class AuthController(IConfiguration configuration, IAuthRepository authRepo) : ControllerBase
 {
-
+    
     [HttpPost("login")]
-    public ActionResult<LoginResponseModel> Login([FromBody] LoginModel request)
+    public async Task<ActionResult<LoginResponseModel>> Login([FromBody] LoginModel request)
     {
-        if (request.Username == "Admin" && request.Password == "Admin")
+        var user = await authRepo.GetUserByLoginAsync(request.Username, request.Password);
+        if (user != null)
         {
-            var token = GenerateJwtToken(request.Username, isRefreshToken: false);
-            var refreshtoken = GenerateJwtToken(request.Username, isRefreshToken: true);
+            var token = GenerateJwtToken(user, isRefreshToken: false);
+            var refreshtoken = GenerateJwtToken(user, isRefreshToken: true);
+
+            await authRepo.AddRefreshTokenAsync(new RefreshToken
+            {
+                Token = refreshtoken,
+                UserId = user.Id
+            });
+
             return Ok(new LoginResponseModel
             {
                 Token = token,
@@ -36,19 +47,22 @@ public class AuthController(IConfiguration configuration) : ControllerBase
     }
 
     [HttpGet("login-by-refresh-token")]
-    public ActionResult<LoginResponseModel> LoginByRefreshToken(string refreshToken)
+    public async Task<ActionResult<LoginResponseModel>> LoginByRefreshToken(string request)
     {
-        var secret = configuration.GetValue<string>("Jwt:RefreshTokenSecret");
-        var claimsPricipal = GetClaimsPrincipalFromToken(refreshToken, secret);
-        if (claimsPricipal == null)
+        var refreshToken = await authRepo.GetRefreshTokenAsync(request);
+        if (refreshToken == null)
         {
-            return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
-        var username = claimsPricipal.FindFirstValue(ClaimTypes.NameIdentifier);
-        // Kontroller om user er gyldig
 
-        var newToken = GenerateJwtToken(username, isRefreshToken: false);
-        var newRefreshToken = GenerateJwtToken(username, isRefreshToken: true);
+        var newToken = GenerateJwtToken(refreshToken.User, isRefreshToken: false);
+        var newRefreshToken = GenerateJwtToken(refreshToken.User, isRefreshToken: true);
+
+        await authRepo.AddRefreshTokenAsync(new RefreshToken
+        {
+            Token = newRefreshToken,
+            UserId = refreshToken.UserId
+        });
 
         return new LoginResponseModel
         {
@@ -58,37 +72,14 @@ public class AuthController(IConfiguration configuration) : ControllerBase
         };
     }
 
-    private ClaimsPrincipal GetClaimsPrincipalFromToken(string token, string secret)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(secret);
-        try
-        {
-            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateAudience = true,
-                ValidAudience = "Lasse",
-                ValidateIssuer = true,
-                ValidIssuer = "Lasse",
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out var validatedToken);
-            return principal;
-        }
-        catch
-        {
-            return null;
-        }
-    }
 
-    private string GenerateJwtToken(string username, bool isRefreshToken)
+    private string GenerateJwtToken(User user, bool isRefreshToken)
     {
-        var claims = new[]
+        var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "Admin")
+            new Claim(ClaimTypes.Name, user.Username)
         };
+        claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role.RoleName)));
 
         string secret = configuration.GetValue<string>($"Jwt:{(isRefreshToken ? "RefreshTokenSecret" : "Secret")}");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
