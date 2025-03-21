@@ -49,7 +49,5 @@ public class BookRepository : BaseRepository
         await SetAuthorizeHeader();
         var queryParams = $"?bookid={bookId}";
         var response = await _httpClient.DeleteAsync(HentBaseUrl() + "book/delete-book" + queryParams);
-
-        // Får en 415
     }
 }

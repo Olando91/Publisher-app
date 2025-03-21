@@ -74,7 +74,7 @@ public class BookController : Controller
     [ProducesResponseType(typeof(Response<BookDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Response<>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Response<>), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteBook([FromBody] DeleteBookRequest request)
+    public async Task<IActionResult> DeleteBook([FromQuery] DeleteBookRequest request)
     {
         if (!request.RequestIsValid())
             return new ObjectResult(new object()) { StatusCode = StatusCodes.Status400BadRequest };
