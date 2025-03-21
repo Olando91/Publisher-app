@@ -3,11 +3,12 @@
 @using Publisher_GUI.Components.Dialogs
 @using Publisher_GUI.Data.Services.Authentication
 @inject IDialogService DialogService
+@inject ISnackbar snackbar
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
 <MudNavMenu>
-    <MudPaper Square="true" Style="height:85vh;">
+    <MudPaper Square="true" Style="height:85vh;" Elevation="0">
         <MudNavLink Href="/" Match="NavLinkMatch.All">Forside</MudNavLink>
         <AuthorizeView>
             <Authorized>
@@ -16,7 +17,7 @@
         </AuthorizeView>
     </MudPaper>
 
-    <MudPaper Square="true" Style="justify-content:center; display:flex; align-items: center;">
+    <MudPaper Square="true" Style="justify-content:center; display:flex; align-items: center;" Elevation="0">
         <AuthorizeView>
             <NotAuthorized>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick=LoginDialog Style="width:90%; height:50%;">
@@ -32,11 +33,15 @@
 
 @code {
 
-    private Task LoginDialog()
+    private async Task LoginDialog()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
-        return DialogService.ShowAsync<AdminLoginDialog>("Admin dialog", options);
+        var dialog = await DialogService.ShowAsync<AdminLoginDialog>("Admin dialog", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            snackbar.Add("Succes", severity: Severity.Success);
     }
 
     private async Task Logout()

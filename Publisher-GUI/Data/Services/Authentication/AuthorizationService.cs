@@ -17,7 +17,10 @@ public class AuthorizationService
         try
         {
             var res = await _authRepo.CheckCredentials(loginModel);
-
+            if (res == null)
+            {
+                return null;
+            }
             return res;
         }
         catch (Exception e)

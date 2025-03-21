@@ -2,13 +2,13 @@
 using Applikation.DTOs.Book;
 using Applikation.Porte.Indgående;
 using Applikation.RequestInterfaces;
-using Applikation.UseCases.Create;
-using Applikation.UseCases.Read;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Publisher_API.Requests;
 
 namespace Publisher_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/book")]
 public class BookController : Controller

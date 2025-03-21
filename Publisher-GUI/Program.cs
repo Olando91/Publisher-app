@@ -1,5 +1,6 @@
 using Data.Services.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 using MudBlazor.Services;
 using Publisher_GUI.Data.Repositories;
 using Publisher_GUI.Data.Services;
@@ -17,7 +18,14 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        builder.Services.AddMudServices();
+        builder.Services.AddMudServices(config =>
+        {
+            config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            config.SnackbarConfiguration.PreventDuplicates = true;
+            config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            config.SnackbarConfiguration.ShowCloseIcon = true;
+        });
+
         builder.Services.AddHttpClient();
         builder.Services.AddHttpContextAccessor();
 
@@ -28,11 +36,15 @@ public class Program
         builder.Services.AddScoped<AuthorService>();
         builder.Services.AddScoped<BookService>();
         builder.Services.AddScoped<AuthorizationService>();
+        builder.Services.AddScoped<ArtistService>();
+        builder.Services.AddScoped<CoverService>();
 
         //Repos
         builder.Services.AddScoped<AuthorRepository>();
         builder.Services.AddScoped<BookRepository>();
         builder.Services.AddScoped<AuthorizationRepository>();
+        builder.Services.AddScoped<ArtistRepository>();
+        builder.Services.AddScoped<CoverRepository>();
 
         //Custom auth provider
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();

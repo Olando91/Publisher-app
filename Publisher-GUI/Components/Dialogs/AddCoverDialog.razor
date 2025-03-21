@@ -1,0 +1,76 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@inject ArtistService _artistService
+@inject CoverService _coverService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Add new cover</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="NewCover.DesignIdea" Label="Design idea"></MudTextField>
+        <MudCheckBox @bind-Value="NewCover.DigitalOnly" Label="Digital only"></MudCheckBox>
+
+        <MudSelect T="Guid" Label="Select artists" MultiSelection="true" SelectedValuesChanged="SelectedValuesChanged" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
+            @foreach (var artist in Artists)
+            {
+                <MudSelectItem T="Guid" Value="artist.Id">@artist.FullName()</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Create">Create</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Guid BookId { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private NewCoverForm NewCover = new();
+    private List<Artist> Artists = new();
+    private string ValidationMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Artists = await _artistService.GetAllArtists();
+        NewCover.BookId = BookId;
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Create()
+    {
+        if (NewCover.ArtistIds.Count == 0)
+        {
+            ValidationMessage = "Der skal være mindst 1 artist";
+            return;
+        }
+
+        await _coverService.CreateCover(NewCover);
+        var snackbarMessage = "Ny cover tilføjet";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+
+    private void SelectedValuesChanged(IEnumerable<Guid> values)
+    {
+        NewCover.ArtistIds = values.ToList();
+    }
+
+    private string GetMultiSelectionText(List<string> selectedValues)
+    {
+        return $"Vælg Artister";
+    }
+}

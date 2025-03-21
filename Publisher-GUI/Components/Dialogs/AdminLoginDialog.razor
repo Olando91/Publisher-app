@@ -4,6 +4,7 @@
 @using Publisher_GUI.Data.Services.Authentication
 @using Publisher_GUI.Models.Authorization
 @using global::Data.Services.Authentication
+@inject ISnackbar Snackbar
 @inject AuthorizationService AuthorizationService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
@@ -39,17 +40,12 @@
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res);
             NavigationManager.NavigateTo("/admin");
+            MudDialog.Close();
         }
-
-        // Replace with actual authentication logic
-        // if (Username == "admin" && Password == "password123")
-        // {
-        //     MudDialog.Close(DialogResult.Ok(true)); // Successfully logged in
-        // }
-        // else
-        // {
-        //     ErrorMessage = "Invalid username or password.";
-        // }
+        else
+        {
+            Snackbar.Add("Login fejlet", severity: Severity.Error);
+        }
     }
 
     private void Close() => MudDialog.Close(DialogResult.Cancel());

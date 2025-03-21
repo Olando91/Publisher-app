@@ -2,15 +2,13 @@
 using Applikation.DTOs.Cover;
 using Applikation.Porte.Indgående;
 using Applikation.RequestInterfaces;
-using Applikation.UseCases.Create;
-using Applikation.UseCases.Delete;
-using Applikation.UseCases.Read;
-using Applikation.UseCases.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Publisher_API.Requests;
 
 namespace Publisher_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/cover")]
 public class CoverController : Controller

@@ -1,0 +1,35 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@using global::Models.Book
+@inject IDialogService DialogService
+
+<MudItem xs="12" sm="6" md="4">
+    <MudCard Elevation="25" Class="rounded-lg pb-4">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5" Align="Align.Center">@Book.Title</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent Style="display:flex; flex-direction: column; align-items: center;">
+            <img src="@Book.Cover.Image" alt="Cover" style="width: 60%; height:auto;" />
+            <MudText Typo="Typo.h6" Align="Align.Center">@Book.Author.FullName()</MudText>
+            <MudText Typo="Typo.h6" Align="Align.Center">Price: @Book.BasePrice kr.</MudText>
+        </MudCardContent>
+        <MudCardActions Class="d-flex justify-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 50%" OnClick="() => BookDetails(Book)">Details</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudItem>
+
+@code {
+    [Parameter]
+    public Book Book { get; set; }
+
+    private Task BookDetails(Book book)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
+        var parameters = new DialogParameters { ["Book"] = book };
+
+        return DialogService.ShowAsync<BookDetailsDialog>("Book details dialog", parameters, options);
+    }
+}

@@ -1,11 +1,11 @@
 ﻿@page "/"
 @using MudBlazor
 @using Publisher_GUI.Components.Dialogs
+@using Publisher_GUI.Components.Home
 @using Publisher_GUI.Data.Services
 @using Publisher_GUI.Models.Author
 @using global::Models.Book
 @inject BookService _bookService
-@inject IDialogService DialogService
 
 <MudContainer class="mt-16">
     <MudSwitch @bind-Value=@AuthorBookSwitch Label="Sort by Author/Book" LabelPlacement="Placement.Top" Color="Color.Primary" UncheckedColor="Color.Primary" />
@@ -18,23 +18,7 @@
         <MudGrid Class="mt-8">
             @foreach (var book in Books.Where(x => x.Cover != null))
             {
-                <MudItem xs="12" sm="6" md="4">
-                    <MudCard Elevation="25" Class="rounded-lg pb-4">
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h5" Align="Align.Center">@book.Title</MudText>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                        <MudCardContent Style="display:flex; flex-direction: column; align-items: center;">
-                            <img src="@GetRandomImage()" alt="Cover" style="width: 60%; height:auto;" />
-                            <MudText Typo="Typo.h6" Align="Align.Center">@book.Author.FullName()</MudText>
-                            <MudText Typo="Typo.h6" Align="Align.Center">Price: @book.BasePrice kr.</MudText>
-                        </MudCardContent>
-                        <MudCardActions Class="d-flex justify-center">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 50%" OnClick="() => BookDetails(book)">Details</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
+                <HomeBookDisplay Book="@book"></HomeBookDisplay>
             }
         </MudGrid>
     }
@@ -52,26 +36,11 @@
     }
     private bool _authorBookSwitch;
     private List<Book> Books { get; set; } = new();
-    private static readonly string[] Images =
-        {
-            "Images/Cover1.jpg",
-            "Images/Cover2.jpg",
-            "Images/Cover3.jpg",
-            "Images/Cover4.jpg",
-            "Images/Cover5.jpg",
-            "Images/Cover6.jpg",
-    };
-    private Random random = new();
 
     protected override async Task OnInitializedAsync()
     {
-        Books = await _bookService.GetAllBooks();
+        Books = await _bookService.GetAllBooksNoAuth();
         SortAuthorsOrBooks();
-    }
-
-    private string GetRandomImage()
-    {
-        return Images[random.Next(Images.Length)];
     }
 
     private void SortAuthorsOrBooks()
@@ -86,13 +55,5 @@
         }
 
         StateHasChanged();
-    }
-
-    private Task BookDetails(Book book)
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
-        var parameters = new DialogParameters { ["Book"] = book };
-
-        return DialogService.ShowAsync<BookDetailsDialog>("Book details dialog", parameters, options);
     }
 }

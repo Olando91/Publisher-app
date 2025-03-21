@@ -1,20 +1,28 @@
-﻿using Publisher_GUI.Models.Artist;
+﻿using Publisher_GUI.Models.Book;
 
 namespace Publisher_GUI.Models.Cover;
 
-public class BookCover
+public class ArtistCover
 {
     public Guid Id { get; set; }
     public string DesignIdea { get; set; }
     public bool DigitalOnly { get; set; }
-    public string Image { get; private set; }
-    public List<CoverArtist> Artists { get; set; }
+    public CoverBook Book { get; set; }
+    public string Image { get; set; }
 
-    public BookCover()
+    public ArtistCover()
     {
         Image = SetImage();
     }
 
+    public ArtistCover(Guid id, string desingIdea, bool digitalOnly, CoverBook book)
+    {
+        Id = id;
+        DesignIdea = desingIdea;
+        DigitalOnly = digitalOnly;
+        Book = book;
+        Image = SetImage();
+    }
     private string SetImage()
     {
         var images = new[]

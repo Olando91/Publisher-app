@@ -24,8 +24,7 @@ public class AuthorizationRepository : BaseRepository
         }
         else
         {
-            var err = await res.Content.ReadFromJsonAsync<APIResponse<Error>>();
-            throw err!.Error!;
+            return null;
         }
 
     }

@@ -13,7 +13,21 @@ public class BookService
         _bookRepo = bookRepo;
     }
 
-    public async Task<List<Book>> GetAllBooks() 
+    public async Task<List<Book>> GetAllBooksNoAuth() 
+    {
+        try
+        {
+            var books = await _bookRepo.GetAllBooksNoAuth();
+
+            return books.Data;
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task<List<Book>> GetAllBooks()
     {
         try
         {
@@ -22,6 +36,18 @@ public class BookService
             return books.Data;
         }
         catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task DeleteBook(Guid bookId) 
+    {
+        try
+        {
+            await _bookRepo.DeleteBook(bookId);
+        }
+        catch (Error e) 
         {
             throw e;
         }

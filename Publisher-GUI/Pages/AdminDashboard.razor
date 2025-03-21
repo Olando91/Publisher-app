@@ -1,16 +1,41 @@
 ﻿@page "/admin"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@using Publisher_GUI.Components.AdminDashboardTabs
+@using Publisher_GUI.Data.Services
+@using global::Models.Book
+@inject BookService _bookService
+
 <AuthorizeView>
     <NotAuthorized>
         FORSVIND ELLER DØ!!!
     </NotAuthorized>
     <Authorized>
-        <h3>HELLO ADMIN!!</h3>
+        <MudContainer Class="mt-16">
+            <MudTabs Centered="true">
+
+                <MudTabPanel Text="Books">
+                    <BooksTab></BooksTab>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Authors">
+                    <MudText>Authors</MudText>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Covers">
+                    <MudText>Covers</MudText>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Artists">
+                    <MudText>Artists</MudText>
+                </MudTabPanel>
+
+            </MudTabs>
+        </MudContainer>
     </Authorized>
 </AuthorizeView>
 
 
 @code {
-
 }

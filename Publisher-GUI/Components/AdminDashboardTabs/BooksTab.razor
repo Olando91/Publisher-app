@@ -1,0 +1,90 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@using Publisher_GUI.Data.Services
+@using global::Models.Book
+@inject IDialogService DialogService
+@inject BookService _bookService;
+
+<MudContainer class="mt-16">
+    <MudDataGrid Items="@Books">
+        <Columns>
+            <PropertyColumn Property="x => x.Title" />
+            <PropertyColumn Property="x => x.Author.FullName()" Title="Author" />
+            <PropertyColumn Property="x => x.PublishDate" Title="Published" />
+            <PropertyColumn Property="x => x.BasePrice" Title="Price" />
+            <TemplateColumn Title="Has Cover">
+                <CellTemplate>
+                    @if (context.Item.Cover != null)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success"/>
+                    }
+                    else
+                    {
+                        <MudButton OnClick="@(() => AddCover(context.Item.Id))" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small">
+                            Add Cover
+                        </MudButton>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn CellClass="d-flex justify-center">
+                <HeaderTemplate>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary">Add book</MudButton>
+                </HeaderTemplate>
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary">Edit</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBook(context.Item.Id)">Delete</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private List<Book> Books { get; set; } = new List<Book>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetBooks();
+    }
+
+    private async Task AddCover(Guid bookId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"BookId", bookId}
+        };
+
+        var dialog = await DialogService.ShowAsync<AddCoverDialog>("Create Cover", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetBooks();
+    }
+
+    private async Task GetBooks()
+    {
+        Books = await _bookService.GetAllBooks();
+        StateHasChanged();
+    }
+
+    private async Task DeleteBook(Guid bookId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"BookId", bookId}
+        };
+
+        var dialog = await DialogService.ShowAsync<DeleteBookDialog>("Delete Book", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetBooks();
+    }
+
+}
