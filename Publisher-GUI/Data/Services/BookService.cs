@@ -1,4 +1,5 @@
 ﻿using Models.Book;
+using Publisher_GUI.Data.Forms;
 using Publisher_GUI.Data.Repositories;
 using Publisher_GUI.Models;
 
@@ -48,6 +49,18 @@ public class BookService
             await _bookRepo.DeleteBook(bookId);
         }
         catch (Error e) 
+        {
+            throw e;
+        }
+    }
+
+    public async Task EditBook(EditBookForm editedBook)
+    {
+        try
+        {
+            await _bookRepo.EditBook(editedBook);
+        }
+        catch (Error e)
         {
             throw e;
         }

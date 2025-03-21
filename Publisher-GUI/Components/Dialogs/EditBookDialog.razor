@@ -1,0 +1,60 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using global::Models.Book
+@inject BookService _bookService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Edit Book</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="EditBook.Title" Label="Title" Required="true" Placeholder="@Book.Title"/>
+        <MudDatePicker @bind-Date="SelectedDateTime" Label="Publish Date" Required="true" Placeholder="@Book.PublishDate.ToString("dd/MM/yyyy")"/>
+        <MudTextField @bind-Value="EditBook.BasePrice" Label="Base Price" Type="number" Required="true" Placeholder="@Book.BasePrice.ToString()"/>
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Book Book { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string ValidationMessage { get; set; }
+    private EditBookForm EditBook = new();
+    private DateTime? SelectedDateTime
+    {
+        get => EditBook.PublishDate.ToDateTime(TimeOnly.MinValue); // Convert DateOnly to DateTime
+        set => EditBook.PublishDate = DateOnly.FromDateTime(value ?? DateTime.Today); // Convert DateTime to DateOnly
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditBook.BookId = Book.Id;
+        EditBook.Title = Book.Title;
+        EditBook.PublishDate = Book.PublishDate;
+        EditBook.BasePrice = Book.BasePrice;
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Save()
+    {
+        await _bookService.EditBook(EditBook);
+        var snackbarMessage = "Bog redigeret";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

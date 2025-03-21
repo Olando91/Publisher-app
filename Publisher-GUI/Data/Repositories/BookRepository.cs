@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Models.Book;
+using Publisher_GUI.Data.Forms;
 using Publisher_GUI.Models;
 using System.Net;
 
@@ -49,5 +50,11 @@ public class BookRepository : BaseRepository
         await SetAuthorizeHeader();
         var queryParams = $"?bookid={bookId}";
         var response = await _httpClient.DeleteAsync(HentBaseUrl() + "book/delete-book" + queryParams);
+    }
+
+    public async Task EditBook(EditBookForm editedBook)
+    {
+        await SetAuthorizeHeader();
+        var respone = await _httpClient.PutAsJsonAsync(HentBaseUrl() + "book/edit-book", editedBook);
     }
 }

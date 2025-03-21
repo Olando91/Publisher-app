@@ -32,7 +32,7 @@
                 </HeaderTemplate>
                 <CellTemplate>
                     <MudStack Row>
-                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary">Edit</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditBook(context.Item)">Edit</MudButton>
                         <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBook(context.Item.Id)">Delete</MudButton>
                     </MudStack>
                 </CellTemplate>
@@ -81,6 +81,22 @@
         };
 
         var dialog = await DialogService.ShowAsync<DeleteBookDialog>("Delete Book", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetBooks();
+    }
+
+    private async Task EditBook(Book book)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Book", book}
+        };
+
+        var dialog = await DialogService.ShowAsync<EditBookDialog>("Edit Book", parameters, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
