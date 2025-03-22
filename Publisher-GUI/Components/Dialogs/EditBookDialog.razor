@@ -13,7 +13,7 @@
 
     <DialogContent>
         <MudTextField @bind-Value="EditBook.Title" Label="Title" Required="true" Placeholder="@Book.Title"/>
-        <MudDatePicker @bind-Date="SelectedDateTime" Label="Publish Date" Required="true" Placeholder="@Book.PublishDate.ToString("dd/MM/yyyy")"/>
+        <MudDatePicker @bind-Date="SelectedDateTime" Label="Publish Date" Required="true" Placeholder="@Book.PublishDate.ToString("dd/MM/yyyy")" ShowToolbar="false" />
         <MudTextField @bind-Value="EditBook.BasePrice" Label="Base Price" Type="number" Required="true" Placeholder="@Book.BasePrice.ToString()"/>
 
         <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
@@ -30,7 +30,7 @@
     private IMudDialogInstance MudDialog { get; set; } = null!;
 
     private string ValidationMessage { get; set; }
-    private EditBookForm EditBook = new();
+    private EditBookRequest EditBook = new();
     private DateTime? SelectedDateTime
     {
         get => EditBook.PublishDate.ToDateTime(TimeOnly.MinValue); // Convert DateOnly to DateTime

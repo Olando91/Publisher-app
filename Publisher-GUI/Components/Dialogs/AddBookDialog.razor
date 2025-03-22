@@ -1,0 +1,95 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Requests
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using Publisher_GUI.Models.Author
+@using global::Models.Book
+@inject AuthorService _authorService
+@inject BookService _bookService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Add Book</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="NewBook.Title" Label="Title" Required="true" Placeholder="Title" />
+        <MudDatePicker @bind-Date="SelectedDateTime" Label="Publish Date" Required="true" Placeholder="Vælg en dato" ShowToolbar="false" />
+        <MudTextField @bind-Value="NewBook.BasePrice" Label="Base Price" Type="number" Required="true" Placeholder="Set price" />
+
+        <MudSelect T="Guid" @bind-Value="NewBook.AuthorId" Label="Select author" Required="true" Placeholder="Vælg en author" ToStringFunc="converter">
+            @foreach (var author in Authors)
+            {
+                <MudSelectItem T="Guid" Value="author.Id">@author.FullName()</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string ValidationMessage { get; set; }
+    private AddBookRequest NewBook = new();
+    private DateTime? SelectedDateTime
+    {
+        get => NewBook.PublishDate.ToDateTime(TimeOnly.MinValue); // Convert DateOnly to DateTime
+        set => NewBook.PublishDate = DateOnly.FromDateTime(value ?? DateTime.Today); // Convert DateTime to DateOnly
+    }
+    private List<Author> Authors { get; set; } = new();
+    Func<Guid, string> converter = i => i == Guid.Empty ? "Vælg author" : "Vælg author";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Authors = await _authorService.GetAllAuthors();
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Save()
+    {
+        if (NewBook.AuthorId == Guid.Empty)
+        {
+            ValidationMessage = "Der skal være 1 author";
+            return;
+        }
+        if (string.IsNullOrEmpty(NewBook.Title))
+        {
+            ValidationMessage = "En bog skal have en titel";
+            return;
+        }
+        if (NewBook.BasePrice <= 0)
+        {
+            ValidationMessage = "Prisen skal være større end 0";
+            return;
+        }
+        if (NewBook.PublishDate > DateOnly.FromDateTime(DateTime.Today))
+        {
+            ValidationMessage = "PublishDate kan ikke være i fremtiden";
+            return;
+        }
+        await _bookService.AddBook(NewBook);
+        var snackbarMessage = "Bog tilføjet";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+
+    private string GetMultiSelectionText()
+    {
+        if (NewBook.AuthorId == Guid.Empty)
+            return "Vælg en Author";
+        else
+            return Authors!.FirstOrDefault(x => x.Id == NewBook.AuthorId).FullName();
+    }
+}

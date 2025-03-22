@@ -13,7 +13,7 @@ public class CoverService
         _coverRepo = coverRepo;
     }
 
-    public async Task CreateCover(NewCoverForm cover)
+    public async Task CreateCover(AddCoverRequest cover)
     {
         try
         {

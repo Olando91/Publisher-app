@@ -10,7 +10,7 @@ public class CoverRepository : BaseRepository
     {
     }
 
-    public async Task CreateCover(NewCoverForm cover)
+    public async Task CreateCover(AddCoverRequest cover)
     {
         await SetAuthorizeHeader();
         var response = await _httpClient.PostAsJsonAsync(HentBaseUrl() + "cover/add-cover", cover);

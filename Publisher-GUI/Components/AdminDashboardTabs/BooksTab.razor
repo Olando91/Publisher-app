@@ -28,7 +28,7 @@
             </TemplateColumn>
             <TemplateColumn CellClass="d-flex justify-center">
                 <HeaderTemplate>
-                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary">Add book</MudButton>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddBook">Add book</MudButton>
                 </HeaderTemplate>
                 <CellTemplate>
                     <MudStack Row>
@@ -97,6 +97,17 @@
         };
 
         var dialog = await DialogService.ShowAsync<EditBookDialog>("Edit Book", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetBooks();
+    }
+
+    private async Task AddBook()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<AddBookDialog>("Create Book", options);
         var result = await dialog.Result;
 
         if (!result.Canceled)

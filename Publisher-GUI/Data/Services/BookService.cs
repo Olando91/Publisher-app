@@ -1,6 +1,7 @@
 ﻿using Models.Book;
 using Publisher_GUI.Data.Forms;
 using Publisher_GUI.Data.Repositories;
+using Publisher_GUI.Data.Requests;
 using Publisher_GUI.Models;
 
 namespace Publisher_GUI.Data.Services;
@@ -54,11 +55,23 @@ public class BookService
         }
     }
 
-    public async Task EditBook(EditBookForm editedBook)
+    public async Task EditBook(EditBookRequest editedBook)
     {
         try
         {
             await _bookRepo.EditBook(editedBook);
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task AddBook(AddBookRequest newBook)
+    {
+        try
+        {
+            await _bookRepo.AddBook(newBook);
         }
         catch (Error e)
         {
