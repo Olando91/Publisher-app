@@ -1,0 +1,100 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist
+@using Publisher_GUI.Models.Author
+@using global::Models.Book
+@inject IDialogService DialogService
+@inject ArtistService _artistService
+
+<MudContainer class="mt-16">
+    <MudDataGrid Items="@Artists">
+        <Columns>
+            <HierarchyColumn T="Artist"></HierarchyColumn>
+            <PropertyColumn Property="x => x.FirstName" Title="First name" />
+            <PropertyColumn Property="x => x.LastName" Title="Last name" />
+            <PropertyColumn Property="x => x.Covers.Count()" Title="Number of covers" />
+
+            <TemplateColumn CellClass="d-flex justify-center">
+                <HeaderTemplate>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddArtist">Add Artist</MudButton>
+                </HeaderTemplate>
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditArtist(context.Item)">Edit</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteArtist(context.Item.Id)">Delete</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+
+        </Columns>
+        <ChildRowContent>
+            <MudDataGrid Items="@context.Item.Covers">
+                <Columns>
+                    <PropertyColumn Property="x => x.DesignIdea" Title="Design Idea"/>
+                    <PropertyColumn Property="x => x.DigitalOnly" Title="Digital Only" />
+                    <PropertyColumn Property="x => x.Book.Title" Title="Book" />
+                </Columns>
+            </MudDataGrid>
+        </ChildRowContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private List<Artist> Artists { get; set; } = new List<Artist>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetArtists();
+    }
+
+    private async Task GetArtists()
+    {
+        Artists = await _artistService.GetAllArtists();
+        StateHasChanged();
+    }
+
+    private async Task DeleteArtist(Guid artistId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"ArtistId", artistId}
+        };
+
+        var dialog = await DialogService.ShowAsync<DeleteArtistDialog>("Delete Artist", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetArtists();
+    }
+
+    private async Task EditArtist(Artist artist)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Artist", artist}
+        };
+
+        var dialog = await DialogService.ShowAsync<EditArtistDialog>("Edit Artist", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetArtists();
+    }
+
+    private async Task AddArtist()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<AddArtistDialog>("Add Artist", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetArtists();
+    }
+
+}

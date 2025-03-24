@@ -30,8 +30,20 @@ namespace Repository.Repositories
         {
             try
             {
-                var artist = await _dbContext.Artists.FindAsync(id);
+                var artist = await _dbContext.Artists
+                    .Include(x => x.Covers)
+                    .ThenInclude(x => x.Artists)
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+                var orphanedCovers = artist.Covers
+                    .Where(c => c.Artists.Count == 1)
+                    .ToList();
+
+                _dbContext.Covers.RemoveRange(orphanedCovers);
+
                 _dbContext.Artists.Remove(artist);
+
+                await _dbContext.SaveChangesAsync();
             }
             catch (Exception e)
             {

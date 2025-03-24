@@ -50,7 +50,7 @@ public class BookRepository : BaseRepository
     {
         await SetAuthorizeHeader();
         var queryParams = $"?bookid={bookId}";
-        var response = await _httpClient.DeleteAsync(HentBaseUrl() + "book/delete-book" + queryParams);
+        var response = await _httpClient.DeleteAsync(HentBaseUrl() + "book/delete-book-by-id" + queryParams);
     }
 
     public async Task EditBook(EditBookRequest editedBook)

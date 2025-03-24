@@ -84,12 +84,4 @@
         Snackbar.Add(snackbarMessage, Severity.Success);
         MudDialog.Close();
     }
-
-    private string GetMultiSelectionText()
-    {
-        if (NewBook.AuthorId == Guid.Empty)
-            return "Vælg en Author";
-        else
-            return Authors!.FirstOrDefault(x => x.Id == NewBook.AuthorId).FullName();
-    }
 }

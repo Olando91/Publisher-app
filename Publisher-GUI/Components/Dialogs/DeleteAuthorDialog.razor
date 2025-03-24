@@ -1,0 +1,39 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@inject AuthorService _authorService;
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Delete Author</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudText Align="Align.Center">Er du sikker?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Delete">Delete</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Guid AuthorId { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Delete()
+    {
+        await _authorService.DeleteAuthor(AuthorId);
+        var snackbarMessage = "Author slettet";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

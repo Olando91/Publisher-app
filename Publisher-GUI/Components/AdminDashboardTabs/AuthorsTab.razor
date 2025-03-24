@@ -1,0 +1,99 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Author
+@using global::Models.Book
+@inject IDialogService DialogService
+@inject AuthorService _authorService
+
+<MudContainer class="mt-16">
+    <MudDataGrid Items="@Authors">
+        <Columns>
+            <HierarchyColumn T="Author"></HierarchyColumn>
+            <PropertyColumn Property="x => x.FirstName" Title="First name" />
+            <PropertyColumn Property="x => x.LastName" Title="Last name" />
+            <PropertyColumn Property="x => x.Books.Count()" Title="Number of books" />
+
+            <TemplateColumn CellClass="d-flex justify-center">
+                <HeaderTemplate>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAuthor">Add Author</MudButton>
+                </HeaderTemplate>
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditAuthor(context.Item)">Edit</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteAuthor(context.Item.Id)">Delete</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+
+        </Columns>
+        <ChildRowContent>
+            <MudDataGrid Items="@context.Item.Books">
+                <Columns>
+                    <PropertyColumn Property="x => x.Title" />
+                    <PropertyColumn Property="x => x.PublishDate" Title="Published" />
+                    <PropertyColumn Property="x => x.BasePrice" Title="Price" />
+                </Columns>
+            </MudDataGrid>
+        </ChildRowContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private List<Author> Authors { get; set; } = new List<Author>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetAuthors();
+    }
+
+    private async Task GetAuthors()
+    {
+        Authors = await _authorService.GetAllAuthors();
+        StateHasChanged();
+    }
+
+    private async Task DeleteAuthor(Guid authorId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"AuthorId", authorId}
+        };
+
+        var dialog = await DialogService.ShowAsync<DeleteAuthorDialog>("Delete Author", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetAuthors();
+    }
+
+    private async Task EditAuthor(Author author)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Author", author}
+        };
+
+        var dialog = await DialogService.ShowAsync<EditAuthorDialog>("Edit Author", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetAuthors();
+    }
+
+    private async Task AddAuthor()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<AddAuthorDialog>("Add Author", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetAuthors();
+    }
+
+}

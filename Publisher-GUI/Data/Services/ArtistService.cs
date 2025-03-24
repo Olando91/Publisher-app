@@ -1,5 +1,6 @@
 ﻿using Publisher_GUI.Data.Forms;
 using Publisher_GUI.Data.Repositories;
+using Publisher_GUI.Data.Requests;
 using Publisher_GUI.Models;
 using Publisher_GUI.Models.Artist;
 
@@ -21,6 +22,42 @@ public class ArtistService
             var artists = await _artistRepo.GetAllArtists();
 
             return artists.Data;
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task DeleteArtist(Guid artistId)
+    {
+        try
+        {
+            await _artistRepo.DeleteArtist(artistId);
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task EditArtist(EditArtistRequest editedArtist)
+    {
+        try
+        {
+            await _artistRepo.EditArtist(editedArtist);
+        }
+        catch (Error e)
+        {
+            throw e;
+        }
+    }
+
+    public async Task AddArtist(AddArtistRequest newArtist)
+    {
+        try
+        {
+            await _artistRepo.AddArtist(newArtist);
         }
         catch (Error e)
         {

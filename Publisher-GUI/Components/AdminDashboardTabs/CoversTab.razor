@@ -1,0 +1,117 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Components.Dialogs
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Cover
+@using global::Models.Book
+@inject IDialogService DialogService
+@inject CoverService _coverService;
+
+<MudContainer class="mt-16">
+    <MudDataGrid Items="@Covers">
+        <Columns>
+            <HierarchyColumn T="Cover"></HierarchyColumn>
+            <PropertyColumn Property="x => x.DesignIdea" Title="Design Idea" />
+            <PropertyColumn Property="x => x.DigitalOnly" Title="Digital Only" />
+            <PropertyColumn Property="x => x.Book.Title" Title="Book" />
+            <PropertyColumn Property="x => x.Artists.Count()" Title="Number of Artists" />
+
+            <TemplateColumn CellClass="d-flex justify-center">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditCover(context.Item)">Edit</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteCover(context.Item.Id)">Delete</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddArtistToCover(context.Item)">Add Artist</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" Disabled="context.Item.Artists.Count == 1" OnClick="() => RemoveArtistFromCover(context.Item)">Remove Artist</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <ChildRowContent>
+            <MudDataGrid Items="@context.Item.Artists">
+                <Columns>
+                    <PropertyColumn Property="x => x.FirstName" Title="First name" />
+                    <PropertyColumn Property="x => x.LastName" Title="Last name" />
+                </Columns>
+            </MudDataGrid>
+        </ChildRowContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private List<Cover> Covers { get; set; } = new List<Cover>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetCovers();
+    }
+
+    private async Task GetCovers()
+    {
+        Covers = await _coverService.GetAllCovers();
+        StateHasChanged();
+    }
+
+    private async Task DeleteCover(Guid coverId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"CoverId", coverId}
+        };
+
+        var dialog = await DialogService.ShowAsync<DeleteCoverDialog>("Delete Cover", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetCovers();
+    }
+
+    private async Task EditCover(Cover cover)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Cover", cover}
+        };
+
+        var dialog = await DialogService.ShowAsync<EditCoverDialog>("Edit Cover", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetCovers();
+    }
+
+    private async Task AddArtistToCover(Cover cover)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Cover", cover}
+        };
+
+        var dialog = await DialogService.ShowAsync<AddArtistToCoverDialog>("Add Artist to Cover", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetCovers();
+    }
+
+    private async Task RemoveArtistFromCover(Cover cover)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+            {"Cover", cover}
+        };
+
+        var dialog = await DialogService.ShowAsync<RemoveArtistFromCoverDialog>("Remove Artist from Cover", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            GetCovers();
+    }
+}

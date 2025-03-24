@@ -1,0 +1,72 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Requests
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using Publisher_GUI.Models.Cover
+@inject ArtistService _artistService
+@inject CoverService _coverService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Artist to Cover</MudText>
+    </TitleContent>
+
+    <DialogContent>
+
+        <MudSelect T="Guid" @bind-Value="request.ArtistId" Label="Select Artist" Required="true" Placeholder="Vælg en artist" ToStringFunc="converter" Disabled="Artists.Count == 0">
+            @foreach (var artist in Artists)
+            {
+                <MudSelectItem T="Guid" Value="artist.Id">@artist.FullName()</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Create" Disabled="Artists.Count == 0">Add Artist</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Cover Cover { get; set; }
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private AddArtistToCoverRequest request = new();
+    private List<Artist> Artists = new();
+    private string ValidationMessage { get; set; }
+
+    Func<Guid, string> converter = i => i == Guid.Empty ? "Vælg Artist" : "Vælg Artist";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await _artistService.GetAllArtists();
+        Artists = result.Where(x => x.Covers.All(c => c.Id != Cover.Id)).ToList();
+        if (Artists.Count == 0)
+            ValidationMessage = "Alle artister er allerede på dette cover";
+        request.CoverId = Cover.Id;
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Create()
+    {
+        if (request.ArtistId == Guid.Empty)
+        {
+            ValidationMessage = "Der skal vælges 1 ny artist";
+            return;
+        }
+
+        await _coverService.AddArtistToCover(request);
+        var snackbarMessage = "Ny artist tilføjet til cover";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

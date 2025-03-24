@@ -1,0 +1,60 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Requests
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using Publisher_GUI.Models.Author
+@using global::Models.Book
+@inject ArtistService _artistService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Add Artist</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="NewArtist.FirstName" Label="First name" Required="true" Placeholder="First name" />
+        <MudTextField @bind-Value="NewArtist.LastName" Label="Last name" Required="true" Placeholder="Last name" />
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string ValidationMessage { get; set; }
+    private AddArtistRequest NewArtist = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Save()
+    {
+        if (string.IsNullOrEmpty(NewArtist.FirstName))
+        {
+            ValidationMessage = "En artist skal have et fornavn";
+            return;
+        }
+        if (string.IsNullOrEmpty(NewArtist.LastName))
+        {
+            ValidationMessage = "En artist skal have et efternavn";
+            return;
+        }
+        await _artistService.AddArtist(NewArtist);
+        var snackbarMessage = "Artist tilføjet";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

@@ -1,0 +1,55 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Requests
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using Publisher_GUI.Models.Author
+@using global::Models.Book
+@inject ArtistService _artistService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Edit Artist</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="EditArtist.FirstName" Label="First name" Required="true" Placeholder="@Artist.FirstName" />
+        <MudTextField @bind-Value="EditArtist.LastName" Label="Last name" Required="true" Placeholder="@Artist.LastName" />
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Artist Artist { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string ValidationMessage { get; set; }
+    private EditArtistRequest EditArtist = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditArtist.ArtistId = Artist.Id;
+        EditArtist.FirstName = Artist.FirstName;
+        EditArtist.LastName = Artist.LastName;
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Save()
+    {
+        await _artistService.EditArtist(EditArtist);
+        var snackbarMessage = "Artist redigeret";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

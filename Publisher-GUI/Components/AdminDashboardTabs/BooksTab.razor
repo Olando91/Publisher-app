@@ -28,7 +28,7 @@
             </TemplateColumn>
             <TemplateColumn CellClass="d-flex justify-center">
                 <HeaderTemplate>
-                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddBook">Add book</MudButton>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddBook" Disabled="Books.Count == 0">Add book</MudButton>
                 </HeaderTemplate>
                 <CellTemplate>
                     <MudStack Row>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Publisher_GUI.Data.Requests;
 using Publisher_GUI.Models;
 using Publisher_GUI.Models.Author;
 using System.Net;
@@ -44,5 +45,24 @@ public class AuthorRepository : BaseRepository
             throw err!.Error!;
         }
 
+    }
+
+    public async Task DeleteAuthor(Guid authorId)
+    {
+        await SetAuthorizeHeader();
+        var queryParams = $"?authorId={authorId}";
+        var response = await _httpClient.DeleteAsync(HentBaseUrl() + "author/delete-author-by-id" + queryParams);
+    }
+
+    public async Task EditAuthor(EditAuthorRequest editedAuthor)
+    {
+        await SetAuthorizeHeader();
+        var respone = await _httpClient.PutAsJsonAsync(HentBaseUrl() + "author/edit-author", editedAuthor);
+    }
+
+    public async Task AddAuthor(AddAuthorRequest newAuthor)
+    {
+        await SetAuthorizeHeader();
+        var response = await _httpClient.PostAsJsonAsync(HentBaseUrl() + "author/add-author", newAuthor);
     }
 }

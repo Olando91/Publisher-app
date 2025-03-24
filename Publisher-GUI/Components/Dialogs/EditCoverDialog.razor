@@ -1,0 +1,56 @@
+﻿@using MudBlazor
+@using Publisher_GUI.Data.Forms
+@using Publisher_GUI.Data.Requests
+@using Publisher_GUI.Data.Services
+@using Publisher_GUI.Models.Artist;
+@using Publisher_GUI.Models.Author
+@using Publisher_GUI.Models.Cover
+@using global::Models.Book
+@inject CoverService _coverService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="text-center" Align="Align.Center">Edit Cover</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value="EditCover.DesignIdea" Label="Design Idea" Required="true" Placeholder="@Cover.DesignIdea" />
+        <MudCheckBox @bind-Value="EditCover.DigitalOnly" Label="Digital only"></MudCheckBox>
+
+        <MudText Typo="Typo.body2" Color="Color.Error">@ValidationMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Close">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public Cover Cover { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string ValidationMessage { get; set; }
+    private EditCoverRequest EditCover = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditCover.CoverId = Cover.Id;
+        EditCover.DesignIdea = Cover.DesignIdea;
+        EditCover.DigitalOnly = Cover.DigitalOnly;
+    }
+
+    private void Close()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task Save()
+    {
+        await _coverService.EditCover(EditCover);
+        var snackbarMessage = "Cover redigeret";
+        Snackbar.Add(snackbarMessage, Severity.Success);
+        MudDialog.Close();
+    }
+}

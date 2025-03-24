@@ -70,7 +70,7 @@ public class BookController : Controller
         return new ObjectResult(apiResponse) { StatusCode = StatusCodes.Status200OK };
     }
 
-    [HttpDelete("delete-book")]
+    [HttpDelete("delete-book-by-id")]
     [ProducesResponseType(typeof(Response<BookDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Response<>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Response<>), StatusCodes.Status500InternalServerError)]

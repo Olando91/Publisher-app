@@ -12,7 +12,8 @@ public static class CoverExtensionMethods
             Id = cover.Id.Value,
             DesignIdea = cover.DesignIdea.Value,
             DigitalOnly = cover.DigitalOnly.Value,
-            Book = cover.Book.TilCoverBookDTO()
+            Book = cover.Book.TilCoverBookDTO(),
+            Artists = cover.Artists.Select(x => x.TilCoverArtistDTO()).ToList(),
         };
     }
     public static BookCoverDTO TilBookCoverDTO(this Cover cover)
